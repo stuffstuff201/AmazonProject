@@ -1,3 +1,6 @@
+let cartQuantity = 0;
+document.querySelector(".cart-quantity").innerHTML = cartQuantity;
+
 products.forEach((product) => {
   document.querySelector(
     ".products-grid"
@@ -24,7 +27,7 @@ products.forEach((product) => {
           </div>
 
           <div class="product-quantity-container">
-            <select class="select-quantity">
+            <select class="js-quantity-selector-${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -52,6 +55,7 @@ products.forEach((product) => {
           </button>
         </div>`;
 });
+
 const buttons = document.querySelectorAll(".add-to-cart-button");
 buttons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -64,20 +68,23 @@ buttons.forEach((button) => {
         matchingItem = item;
       }
     });
-
+    let quantityChoice = document.querySelector(
+      `.js-quantity-selector-${productId}`
+    );
+    let quantityValue = Number(quantityChoice.value);
     if (matchingItem) {
-      matchingItem.quantity += 1;
+      matchingItem.quantity += quantityValue;
     } else {
       cart.push({
         productId: productId,
-        quantity: 1,
+        quantity: quantityValue,
       });
     }
     let cartQuantity = 0;
 
-    cart.forEach((item) =>{
+    cart.forEach((item) => {
       cartQuantity += item.quantity;
-      document.querySelector(".cart-quantity").innerHTML = cartQuantity;
     });
+    document.querySelector(".cart-quantity").innerHTML = cartQuantity;
   });
 });

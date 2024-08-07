@@ -72,5 +72,6 @@ buttons.forEach((button) => {
     let productId = button.dataset.productId;
     addToCart(productId);
     updateCartQuantity();
+    localStorage.setItem("cartValue", JSON.stringify(cart));
   });
 });

@@ -1,17 +1,31 @@
-import { cart } from "../data/cart.js";
 import { products } from "../data/products.js";
+let shipping = 499;
 
-let cartSummaryHTML ="";
+let newCart = localStorage.getItem("cartValue");
+let cart2 = JSON.parse(newCart);
+
+document.querySelector(".return-to-home-link").innerHTML = cart2.length;
+
+let cartSummaryHTML = "";
 
 let orderReview = document.querySelector(".order-summary");
+let sum = 0;
+let finalQuant = 0;
+function orderSummary(product, productQuantity) {
+  sum += product.priceCents * productQuantity;
+  finalQuant += productQuantity;
+  console.log(sum);
+}
 
-cart.forEach((cartItem) => {
+cart2.forEach((cartItem) => {
   const productId = cartItem.productId;
   let matchingProduct;
 
   products.forEach((product) => {
     if (product.id === productId) {
       matchingProduct = product;
+      let productQuantity = cartItem.quantity;
+      orderSummary(matchingProduct, productQuantity);
     }
   });
   cartSummaryHTML += `
@@ -94,4 +108,50 @@ cart.forEach((cartItem) => {
           </div>
           `;
 });
+document.querySelector(
+  ".payment-summary"
+).innerHTML = `<div class="payment-summary-title">
+            Order Summary
+          </div>
+
+          <div class="payment-summary-row">
+            <div>Items (${finalQuant}):</div>
+            <div class="payment-summary-money">$${(sum / 100).toFixed(2)}</div>
+          </div>
+
+          <div class="payment-summary-row">
+            <div>Shipping &amp; handling:</div>
+            <div class="payment-summary-money">$${(shipping / 100).toFixed(
+              2
+            )}</div>
+          </div>
+
+          <div class="payment-summary-row subtotal-row">
+            <div>Total before tax:</div>
+            <div class="payment-summary-money">$${(
+              (sum + shipping) /
+              100
+            ).toFixed(2)}</div>
+          </div>
+
+          <div class="payment-summary-row">
+            <div>Estimated tax (10%):</div>
+            <div class="payment-summary-money">$${(
+              (sum + shipping) /
+              10 /
+              100
+            ).toFixed(2)}</div>
+          </div>
+
+          <div class="payment-summary-row total-row">
+            <div>Order total:</div>
+            <div class="payment-summary-money">$${(
+              ((sum + shipping) / 10 + (sum + shipping)) /
+              100
+            ).toFixed(2)}</div>
+          </div>
+
+          <button class="place-order-button button-primary">
+            Place your order
+          </button>`;
 orderReview.innerHTML = cartSummaryHTML;
